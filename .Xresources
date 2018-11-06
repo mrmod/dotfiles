@@ -1,0 +1,3 @@
+urxvt*foreground: #000000
+urxvt*background: #cccccc
+urxvt*transparent: false
