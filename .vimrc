@@ -51,4 +51,5 @@ set statusline+=L:%l\ C:%c
 " Highlight current line
 set cursorline
 hi CursorLine cterm=none ctermbg=233
+set number
 filetype plugin indent on
