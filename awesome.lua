@@ -3,6 +3,7 @@ local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
 -- Widget and layout library
+local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
@@ -27,6 +28,34 @@ client.connect_signal("request::geometry", function(c, context, ...)
     awful.ewmh.geometry(c, context, ...)
   end
 end)
+local freeMemory = 0.0
+local usedMemory = 1.0
+local memory_widget = wibox.widget {
+    data_list = {
+	{ "free", freeMemory },
+	{ "used", usedMemory },
+    },
+    colors = {
+	"#CE93D8", -- used
+	"#FFAB91", -- free
+    },
+    display_labels = false,
+    widget = wibox.widget.piechart,
+}
+local memory_watcher_widget = watch(
+  [[bash -c "/usr/local/bin/meminfo.py"]],
+  1,
+  function(widget, stdout)
+    o = {}
+    for i in string.gmatch(stdout, "%S+") do
+	table.insert(o, i)
+    end
+    -- Used, free, total
+    widget:set_data({tonumber(o[1]), tonumber(o[2])})
+    -- garbage seemed to be running away
+    collectgarbage()
+  end,
+  memory_widget)
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -55,7 +84,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
+beautiful.init("/home/bruce/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "urxvt"
@@ -75,20 +104,20 @@ modkey = "Mod4"
 awful.layout.layouts = {
 --    awful.layout.suit.floating,
 --    awful.layout.suit.tile,
---    awful.layout.suit.tile.left,
+awful.layout.suit.tile.left,
 --    awful.layout.suit.tile.bottom,
 --    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
+awful.layout.suit.fair,
 --    awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
---    awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.max,
+awful.layout.suit.spiral,
+-- awful.layout.suit.spiral.dwindle,
+awful.layout.suit.max,
 --    awful.layout.suit.max.fullscreen,
 --    awful.layout.suit.magnifier,
 --    awful.layout.suit.corner.nw,
-    -- awful.layout.suit.corner.ne,
-    -- awful.layout.suit.corner.sw,
-    -- awful.layout.suit.corner.se,
+-- awful.layout.suit.corner.ne,
+-- awful.layout.suit.corner.sw,
+-- awful.layout.suit.corner.se,
 }
 -- }}}
 
@@ -248,8 +277,8 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             -- mykeyboardlayout,
             wibox.widget.systray(),
-            mytextclock,
-            s.mylayoutbox,
+            -- s.mylayoutbox,
+	    memory_widget,
         },
     }
 end)
@@ -319,6 +348,7 @@ globalkeys = gears.table.join(
       "Return",
       function() awful.spawn(terminal.." -bg Black -fg White -e tmux") end
     ),
+    awful.key({modkey,"Shift"},"g", function () awful.spawn("gimp") end),
     awful.key({ modkey, "Shift"   }, "f", function () awful.spawn(firefox) end,
               {description = "open firefox", group = "launcher"}),
     awful.key({ modkey, "Shift" }, "r", awesome.restart,
