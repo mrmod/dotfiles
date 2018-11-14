@@ -54,4 +54,4 @@ hi CursorLine cterm=none ctermbg=233
 set number
 filetype plugin indent on
 " Paste
-map <F1> :r!xclip -o<CR>
+map <F5> :r!xclip -o -sel clipboard<CR>
