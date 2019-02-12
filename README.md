@@ -1,4 +1,4 @@
 ### Dotfiles
 
 Use them if you like them
-![What it looks like](https://raw.githubusercontent.com/mrmod/dotfiles/master/dotfileview.png)
+![What it looks like](https://github.com/mrmod/dotfiles/raw/master/dotfileview.png)
