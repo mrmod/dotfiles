@@ -8,16 +8,19 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'git://git.wincent.com/command-t.git'
 Plugin 'Vimjas/vim-python-pep8-indent'
-Plugin 'fatih/vim-go'
-Plugin 'vim-jp/vim-go-extra'
+"Plugin 'fatih/vim-go'
+"Plugin 'vim-jp/vim-go-extra'
+Plugin 'pangloss/vim-javascript'
+Plugin 'mxw/vim-jsx'
 Plugin 'mdempsky/gocode', {'rtp': 'vim/'}
 call vundle#end()
 " Colors
 hi Comment ctermfg=DarkGrey
 " Tabs are 4 spaces wide but use spaces
-set tabstop=8
-set softtabstop=0 noexpandtab
-set shiftwidth=4
+set expandtab " Use spaces instead of tab
+set tabstop=2
+set softtabstop=2 " # of spaces a TAB counts for
+set shiftwidth=2
 set smarttab
 set background=dark
 function! GitBranch()
@@ -55,3 +58,12 @@ set number
 filetype plugin indent on
 " Paste
 map <F5> :r!xclip -o -sel clipboard<CR>
+" Code completion
+if has("autocmd") && exists("+omnifunc")
+autocmd Filetype *
+	\	if &omnifunc == "" |
+	\		setlocal omnifunc=syntaxcomplete#Complete |
+	\	endif
+endif
+filetype plugin on
+set omnifunc=syntaxcomplete#Complete
